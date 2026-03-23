@@ -3,6 +3,8 @@ import { toast } from "sonner";
 import { Search, Plus, Pencil, Ban, Trash2 } from "lucide-react";
 import MainLayout from "../components/layout/MainLayout";
 import Badge from "../components/ui/Badge";
+import CreateUserModal from "../components/users/CreateUserModal";
+import EditUserModal from "../components/users/EditUserModal";
 import {
   getUsers,
   deleteUser,
@@ -20,6 +22,8 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editUser, setEditUser] = useState<User | null>(null);
 
   async function fetchUsers() {
     try {
@@ -37,6 +41,14 @@ export default function UsersPage() {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  function openCreateModal() {
+    setCreateOpen(true);
+  }
+
+  function openEditModal(user: User) {
+    setEditUser(user);
+  }
 
   async function handleDelete(id: string) {
     if (!window.confirm("Voulez-vous vraiment supprimer cet utilisateur ?"))
@@ -68,6 +80,13 @@ export default function UsersPage() {
 
   return (
     <MainLayout pageTitle="Comptes utilisateurs" username="Admin" role="Admin">
+      {createOpen && (
+        <CreateUserModal onClose={() => setCreateOpen(false)} onSuccess={fetchUsers} />
+      )}
+      {editUser && (
+        <EditUserModal user={editUser} onClose={() => setEditUser(null)} onSuccess={fetchUsers} />
+      )}
+
       {/* Search + button row */}
       <div className="flex items-center justify-between mb-6">
         <div className="relative">
@@ -84,7 +103,10 @@ export default function UsersPage() {
           />
         </div>
 
-        <button className="bg-primary text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-secondary transition-colors">
+        <button
+          onClick={openCreateModal}
+          className="bg-primary text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-secondary transition-colors"
+        >
           <Plus size={16} />
           Ajouter un utilisateur
         </button>
@@ -162,6 +184,7 @@ export default function UsersPage() {
                       <div className="flex items-center gap-1">
                         <button
                           title="Modifier"
+                          onClick={() => openEditModal(user)}
                           className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
                         >
                           <Pencil size={15} />
