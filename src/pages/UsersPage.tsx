@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Search, Plus, Pencil, Ban, Trash2 } from "lucide-react";
 import MainLayout from "../components/layout/MainLayout";
-import Badge from "../components/ui/Badge";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import CreateUserModal from "../components/users/CreateUserModal";
 import EditUserModal from "../components/users/EditUserModal";
 import {
@@ -103,13 +104,10 @@ export default function UsersPage() {
           />
         </div>
 
-        <button
-          onClick={openCreateModal}
-          className="bg-primary text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-secondary transition-colors"
-        >
-          <Plus size={16} />
+        <Button onClick={openCreateModal}>
+          <Plus />
           Ajouter un utilisateur
-        </button>
+        </Button>
       </div>
 
       {/* Table */}
@@ -182,27 +180,15 @@ export default function UsersPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1">
-                        <button
-                          title="Modifier"
-                          onClick={() => openEditModal(user)}
-                          className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600"
-                        >
-                          <Pencil size={15} />
-                        </button>
-                        <button
-                          title={user.isActive ? "Désactiver" : "Activer"}
-                          onClick={() => handleToggleStatus(user)}
-                          className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-orange-400 hover:text-orange-600"
-                        >
-                          <Ban size={15} />
-                        </button>
-                        <button
-                          title="Supprimer"
-                          onClick={() => handleDelete(user.id)}
-                          className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-red-400 hover:text-red-600"
-                        >
-                          <Trash2 size={15} />
-                        </button>
+                        <Button variant="ghost" size="icon-sm" title="Modifier" onClick={() => openEditModal(user)}>
+                          <Pencil />
+                        </Button>
+                        <Button variant="ghost" size="icon-sm" title={user.isActive ? "Désactiver" : "Activer"} onClick={() => handleToggleStatus(user)} className="text-orange-400 hover:text-orange-600">
+                          <Ban />
+                        </Button>
+                        <Button variant="ghost" size="icon-sm" title="Supprimer" onClick={() => handleDelete(user.id)} className="text-red-400 hover:text-red-600">
+                          <Trash2 />
+                        </Button>
                       </div>
                     </td>
                   </tr>
