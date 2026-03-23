@@ -1,10 +1,11 @@
+import { NavLink } from 'react-router-dom'
 import { Home, Users, FileText, Heart, LogOut } from 'lucide-react'
 
 const navItems = [
-  { label: 'Accueil', icon: Home, href: '#' },
-  { label: 'Comptes utilisateurs', icon: Users, href: '#' },
-  { label: 'Contenus', icon: FileText, href: '#' },
-  { label: "Tracker d'émotions", icon: Heart, href: '#' },
+  { label: 'Accueil', icon: Home, to: '/' },
+  { label: 'Comptes utilisateurs', icon: Users, to: '/users' },
+  { label: 'Contenus', icon: FileText, to: '/contenus' },
+  { label: "Tracker d'émotions", icon: Heart, to: '/tracker' },
 ]
 
 export default function Sidebar() {
@@ -21,24 +22,24 @@ export default function Sidebar() {
           Administration
         </p>
         <ul className="space-y-1">
-          {navItems.map(({ label, icon: Icon, href }) => {
-            const isActive = label === 'Accueil'
-            return (
-              <li key={label}>
-                <a
-                  href={href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+          {navItems.map(({ label, icon: Icon, to }) => (
+            <li key={label}>
+              <NavLink
+                to={to}
+                end={to === '/'}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                     isActive
                       ? 'bg-primary text-white font-medium'
                       : 'text-gray-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  <Icon size={18} />
-                  {label}
-                </a>
-              </li>
-            )
-          })}
+                  }`
+                }
+              >
+                <Icon size={18} />
+                {label}
+              </NavLink>
+            </li>
+          ))}
         </ul>
       </nav>
 
