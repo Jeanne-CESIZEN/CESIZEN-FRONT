@@ -10,7 +10,7 @@ const navItems = [
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 min-h-screen bg-[#15171f] flex flex-col shrink-0">
+    <aside className="w-64 h-full bg-[#15171f] flex flex-col shrink-0">
       {/* Logo */}
       <div className="px-6 py-6">
         <img src="/logo-hor.png" alt="Cesi Zen" className="h-10 w-auto" />
