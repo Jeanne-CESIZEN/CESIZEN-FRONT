@@ -1,8 +1,10 @@
 import {
   CategoriesResponseSchema,
+  CategoryResponseSchema,
   ContentResponseSchema,
   ContentsResponseSchema,
   type Category,
+  type CategoryForm,
   type Content,
   type ContentForm,
 } from '../schemas/content'
@@ -32,4 +34,18 @@ export async function updateContent(id: string, data: ContentForm): Promise<Cont
 
 export async function deleteContent(id: string): Promise<void> {
   await apiClient.delete(`/articles/${id}`)
+}
+
+export async function createCategory(data: CategoryForm): Promise<Category> {
+  const res = await apiClient.post<unknown>('/categories', data)
+  return CategoryResponseSchema.parse(res.data).data
+}
+
+export async function updateCategory(id: string, data: CategoryForm): Promise<Category> {
+  const res = await apiClient.put<unknown>(`/categories/${id}`, data)
+  return CategoryResponseSchema.parse(res.data).data
+}
+
+export async function deleteCategory(id: string): Promise<void> {
+  await apiClient.delete(`/categories/${id}`)
 }
