@@ -11,7 +11,7 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children, pageTitle, username, role }: MainLayoutProps) {
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100">
       <Sidebar />
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header title={pageTitle} username={username} role={role} />
