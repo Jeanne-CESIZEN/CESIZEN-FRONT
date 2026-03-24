@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import RichTextEditor from "@/components/ui/RichTextEditor";
 
 interface ContentFormFieldsProps {
   register: UseFormRegister<ContentForm>;
@@ -30,11 +31,16 @@ export default function ContentFormFields({ register, errors, control, categorie
       </Field>
 
       <Field label="Contenu" error={errors.content?.message}>
-        <textarea
-          {...register("content")}
-          placeholder="Contenu complet de l'article..."
-          rows={6}
-          className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 resize-none"
+        <Controller
+          name="content"
+          control={control}
+          render={({ field }) => (
+            <RichTextEditor
+              value={field.value}
+              onChange={field.onChange}
+              placeholder="Contenu complet de l'article..."
+            />
+          )}
         />
       </Field>
 
