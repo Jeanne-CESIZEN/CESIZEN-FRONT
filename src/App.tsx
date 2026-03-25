@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage'
 import HomePage from './pages/HomePage'
 import UsersPage from './pages/UsersPage'
 import ContentsPage from './pages/ContentsPage'
+import EmotionsPage from './pages/EmotionsPage'
 import type { ReactNode } from 'react'
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
@@ -53,6 +54,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <ContentsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/emotions"
+            element={
+              <ProtectedRoute>
+                <EmotionsPage />
               </ProtectedRoute>
             }
           />

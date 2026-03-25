@@ -6,7 +6,7 @@ const navItems = [
   { label: 'Accueil', icon: Home, to: '/' },
   { label: 'Comptes utilisateurs', icon: Users, to: '/users' },
   { label: 'Contenus', icon: FileText, to: '/contenus' },
-  { label: "Tracker d'émotions", icon: Heart, to: '/tracker' },
+  { label: "Tracker d'émotions", icon: Heart, to: '/emotions' },
 ]
 
 export default function Sidebar() {
