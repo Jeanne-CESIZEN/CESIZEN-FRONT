@@ -1,4 +1,5 @@
 import MainLayout from '../components/layout/MainLayout'
+import { useAuth } from '../hooks/useAuth'
 
 function getGreeting(): string {
   const hour = new Date().getHours()
@@ -8,13 +9,14 @@ function getGreeting(): string {
 }
 
 export default function HomePage() {
-  const username = 'admin'
+  const { user } = useAuth()
+  const firstname = user?.firstname ?? ''
 
   return (
-    <MainLayout pageTitle="Accueil" username={username} role="Admin">
+    <MainLayout pageTitle="Accueil">
       <div>
         <h1 className="text-xl font-bold text-gray-800">
-          {getGreeting()}, {username}
+          {getGreeting()}, {firstname}
         </h1>
         <p className="text-primary text-sm mt-1">
           Comment vous sentez-vous aujourd'hui ?

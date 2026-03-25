@@ -80,7 +80,7 @@ export default function UsersPage() {
   });
 
   return (
-    <MainLayout pageTitle="Comptes utilisateurs" username="Admin" role="Admin">
+    <MainLayout pageTitle="Comptes utilisateurs">
       {createOpen && (
         <CreateUserModal onClose={() => setCreateOpen(false)} onSuccess={fetchUsers} />
       )}

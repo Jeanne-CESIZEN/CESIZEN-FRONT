@@ -1,5 +1,6 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { Home, Users, FileText, Heart, LogOut } from 'lucide-react'
+import { useAuth } from '../../hooks/useAuth'
 
 const navItems = [
   { label: 'Accueil', icon: Home, to: '/' },
@@ -9,6 +10,14 @@ const navItems = [
 ]
 
 export default function Sidebar() {
+  const { logout } = useAuth()
+  const navigate = useNavigate()
+
+  function handleLogout() {
+    logout()
+    navigate('/login')
+  }
+
   return (
     <aside className="w-64 h-full bg-[#15171f] flex flex-col shrink-0">
       {/* Logo */}
@@ -45,7 +54,7 @@ export default function Sidebar() {
 
       {/* Déconnexion */}
       <div className="px-4 py-6 border-t border-white/10">
-        <button className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
+        <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors">
           <LogOut size={18} />
           Déconnexion
         </button>
