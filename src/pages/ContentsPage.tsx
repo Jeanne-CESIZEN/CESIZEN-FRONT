@@ -35,7 +35,7 @@ export default function ContentsPage() {
   }, []);
 
   return (
-    <MainLayout pageTitle="Contenus" username="Admin" role="Admin">
+    <MainLayout pageTitle="Contenus">
       {/* Admin notice */}
       <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-6">
         <ShieldAlert size={20} className="text-blue-500 mt-0.5 shrink-0" />
