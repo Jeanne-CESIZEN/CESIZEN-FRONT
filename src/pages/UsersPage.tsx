@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Search, Plus, Pencil, Ban, Trash2 } from "lucide-react";
 import MainLayout from "../components/layout/MainLayout";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/button";
 import CreateUserModal from "../components/users/CreateUserModal";
 import EditUserModal from "../components/users/EditUserModal";
@@ -67,7 +67,9 @@ export default function UsersPage() {
     try {
       await (user.isActive ? deactivateUser(user.id) : activateUser(user.id));
       await fetchUsers();
-      toast.success(user.isActive ? "Utilisateur désactivé." : "Utilisateur activé.");
+      toast.success(
+        user.isActive ? "Utilisateur désactivé." : "Utilisateur activé."
+      );
     } catch {
       toast.error("Erreur lors de la modification du statut.");
     }
@@ -82,15 +84,22 @@ export default function UsersPage() {
   return (
     <MainLayout pageTitle="Comptes utilisateurs">
       {createOpen && (
-        <CreateUserModal onClose={() => setCreateOpen(false)} onSuccess={fetchUsers} />
+        <CreateUserModal
+          onClose={() => setCreateOpen(false)}
+          onSuccess={fetchUsers}
+        />
       )}
       {editUser && (
-        <EditUserModal user={editUser} onClose={() => setEditUser(null)} onSuccess={fetchUsers} />
+        <EditUserModal
+          user={editUser}
+          onClose={() => setEditUser(null)}
+          onSuccess={fetchUsers}
+        />
       )}
 
       {/* Search + button row */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="relative">
+      <div className="flex flex-wrap items-center gap-3 justify-between mb-6">
+        <div className="relative flex-1 min-w-48">
           <Search
             size={16}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -100,7 +109,7 @@ export default function UsersPage() {
             placeholder="Rechercher un utilisateur..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 pr-4 py-2 rounded-full border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 bg-white w-72"
+            className="pl-10 pr-4 py-2 rounded-full border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 bg-white w-full"
           />
         </div>
 
@@ -110,45 +119,99 @@ export default function UsersPage() {
         </Button>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl overflow-hidden">
-        {loading ? (
-          <p className="px-6 py-8 text-sm text-gray-500">Chargement...</p>
-        ) : error ? (
-          <p className="px-6 py-8 text-sm text-red-500">{error}</p>
-        ) : (
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-gray-100">
-                {[
-                  "NOM",
-                  "EMAIL",
-                  "RÔLE",
-                  "STATUT",
-                  "INSCRIPTION",
-                  "ACTIONS",
-                ].map((col) => (
-                  <th
-                    key={col}
-                    className="px-6 py-3 text-left text-xs font-semibold text-gray-400 tracking-wide"
+      {loading ? (
+        <p className="text-sm text-gray-500">Chargement...</p>
+      ) : error ? (
+        <p className="text-sm text-red-500">{error}</p>
+      ) : filteredUsers.length === 0 ? (
+        <p className="text-sm text-gray-400 text-center py-8">
+          Aucun utilisateur trouvé.
+        </p>
+      ) : (
+        <>
+          {/* Mobile / tablette : cartes */}
+          <div className="flex flex-col gap-3 md:hidden">
+            {filteredUsers.map((user) => (
+              <div
+                key={user.id}
+                className="bg-white rounded-2xl px-5 py-4 flex items-center justify-between gap-3"
+              >
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-gray-800 truncate">
+                    {user.firstname} {user.lastname}
+                  </p>
+                  <p className="text-xs text-gray-400 truncate mt-0.5">
+                    {user.email}
+                  </p>
+                  <div className="flex items-center gap-2 mt-2 flex-wrap">
+                    <Badge
+                      variant={
+                        user.role === "ADMIN" ? "role-admin" : "role-user"
+                      }
+                    >
+                      {user.role === "ADMIN" ? "Admin" : "Utilisateur"}
+                    </Badge>
+                    <Badge variant={user.isActive ? "active" : "inactive"}>
+                      {user.isActive ? "Actif" : "Inactif"}
+                    </Badge>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    title="Modifier"
+                    onClick={() => openEditModal(user)}
                   >
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-8 text-sm text-gray-400 text-center"
+                    <Pencil />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    title={user.isActive ? "Désactiver" : "Activer"}
+                    onClick={() => handleToggleStatus(user)}
+                    className="text-orange-400 hover:text-orange-600"
                   >
-                    Aucun utilisateur trouvé.
-                  </td>
+                    <Ban />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    title="Supprimer"
+                    onClick={() => handleDelete(user.id)}
+                    className="text-red-400 hover:text-red-600"
+                  >
+                    <Trash2 />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop : tableau */}
+          <div className="bg-white rounded-2xl overflow-hidden hidden md:block">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-100">
+                  {[
+                    "NOM",
+                    "EMAIL",
+                    "RÔLE",
+                    "STATUT",
+                    "INSCRIPTION",
+                    "ACTIONS",
+                  ].map((col) => (
+                    <th
+                      key={col}
+                      className="px-6 py-3 text-left text-xs font-semibold text-gray-400 tracking-wide"
+                    >
+                      {col}
+                    </th>
+                  ))}
                 </tr>
-              ) : (
-                filteredUsers.map((user) => (
+              </thead>
+              <tbody>
+                {filteredUsers.map((user) => (
                   <tr
                     key={user.id}
                     className="border-b border-gray-50 last:border-0"
@@ -180,24 +243,41 @@ export default function UsersPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon-sm" title="Modifier" onClick={() => openEditModal(user)}>
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          title="Modifier"
+                          onClick={() => openEditModal(user)}
+                        >
                           <Pencil />
                         </Button>
-                        <Button variant="ghost" size="icon-sm" title={user.isActive ? "Désactiver" : "Activer"} onClick={() => handleToggleStatus(user)} className="text-orange-400 hover:text-orange-600">
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          title={user.isActive ? "Désactiver" : "Activer"}
+                          onClick={() => handleToggleStatus(user)}
+                          className="text-orange-400 hover:text-orange-600"
+                        >
                           <Ban />
                         </Button>
-                        <Button variant="ghost" size="icon-sm" title="Supprimer" onClick={() => handleDelete(user.id)} className="text-red-400 hover:text-red-600">
+                        <Button
+                          variant="ghost"
+                          size="icon-sm"
+                          title="Supprimer"
+                          onClick={() => handleDelete(user.id)}
+                          className="text-red-400 hover:text-red-600"
+                        >
                           <Trash2 />
                         </Button>
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        )}
-      </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </MainLayout>
   );
 }
