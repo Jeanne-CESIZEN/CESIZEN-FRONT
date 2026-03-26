@@ -18,7 +18,8 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const original = error.config
-    if (error.response?.status === 401 && !original._retry) {
+    const isAuthRoute = original.url?.startsWith('/auth/')
+    if (error.response?.status === 401 && !original._retry && !isAuthRoute) {
       original._retry = true
       const storedRefreshToken = localStorage.getItem('refreshToken')
       if (storedRefreshToken) {
