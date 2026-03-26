@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react'
-import { Pencil } from 'lucide-react'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import MainLayout from '../components/layout/MainLayout'
 import EditEmotionModal from '../components/emotions/EditEmotionModal'
+import CreateEmotionModal from '../components/emotions/CreateEmotionModal'
 import { Button } from '@/components/ui/button'
-import { getEmotions, type Emotion } from '../api/emotions'
+import { getEmotions, deleteBaseEmotion, type Emotion } from '../api/emotions'
 
 export default function EmotionsPage() {
   const [emotions, setEmotions] = useState<Emotion[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [editEmotion, setEditEmotion] = useState<Emotion | null>(null)
+  const [createOpen, setCreateOpen] = useState(false)
+  const [deletingId, setDeletingId] = useState<string | null>(null)
 
   async function fetchEmotions() {
     try {
@@ -24,6 +28,20 @@ export default function EmotionsPage() {
     }
   }
 
+  async function handleDelete(emotion: Emotion) {
+    if (!confirm(`Supprimer l'émotion "${emotion.name}" ?`)) return
+    setDeletingId(emotion.id)
+    try {
+      await deleteBaseEmotion(emotion.id)
+      setEmotions((prev) => prev.filter((e) => e.id !== emotion.id))
+      toast.success('Émotion supprimée.')
+    } catch {
+      toast.error('Erreur lors de la suppression.')
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
   useEffect(() => { fetchEmotions() }, [])
 
   return (
@@ -35,10 +53,22 @@ export default function EmotionsPage() {
           onSuccess={fetchEmotions}
         />
       )}
+      {createOpen && (
+        <CreateEmotionModal
+          onClose={() => setCreateOpen(false)}
+          onSuccess={fetchEmotions}
+        />
+      )}
 
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-800">Gestion des émotions</h1>
-        <p className="text-primary text-sm mt-1">Configurez les émotions et sous-émotions disponibles</p>
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-xl font-bold text-gray-800">Gestion des émotions</h1>
+          <p className="text-primary text-sm mt-1">Configurez les émotions et sous-émotions disponibles</p>
+        </div>
+        <Button onClick={() => setCreateOpen(true)}>
+          <Plus size={16} />
+          Nouvelle émotion
+        </Button>
       </div>
 
       {loading ? (
@@ -63,9 +93,20 @@ export default function EmotionsPage() {
                     </div>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon-sm" onClick={() => setEditEmotion(emotion)} title="Modifier">
-                  <Pencil size={15} className="text-primary" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button variant="ghost" size="icon-sm" onClick={() => setEditEmotion(emotion)} title="Modifier">
+                    <Pencil size={15} className="text-primary" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => handleDelete(emotion)}
+                    disabled={deletingId === emotion.id}
+                    title="Supprimer"
+                  >
+                    <Trash2 size={15} className="text-red-400" />
+                  </Button>
+                </div>
               </div>
 
               <div className="border-t border-gray-100 pt-3">

@@ -28,6 +28,11 @@ export async function getEmotions(): Promise<Emotion[]> {
   }))
 }
 
+export async function createBaseEmotion(data: EmotionForm): Promise<BaseEmotion> {
+  const res = await apiClient.post<unknown>('/base-emotions', data)
+  return BaseEmotionResponseSchema.parse(res.data).data
+}
+
 export async function updateBaseEmotion(id: string, data: EmotionForm): Promise<BaseEmotion> {
   const res = await apiClient.put<unknown>(`/base-emotions/${id}`, data)
   return BaseEmotionResponseSchema.parse(res.data).data
@@ -36,6 +41,10 @@ export async function updateBaseEmotion(id: string, data: EmotionForm): Promise<
 export async function addDetailedEmotion(baseEmotionId: string, name: string): Promise<DetailedEmotion> {
   const res = await apiClient.post<unknown>('/detailed-emotions', { name, baseEmotionId })
   return DetailedEmotionResponseSchema.parse(res.data).data
+}
+
+export async function deleteBaseEmotion(id: string): Promise<void> {
+  await apiClient.delete(`/base-emotions/${id}`)
 }
 
 export async function removeDetailedEmotion(id: string): Promise<void> {
