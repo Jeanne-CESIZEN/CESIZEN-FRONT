@@ -4,7 +4,7 @@ import type { AuthUser } from '../api/auth'
 interface AuthContextValue {
   user: AuthUser | null
   token: string | null
-  setAuth: (token: string, user: AuthUser) => void
+  setAuth: (token: string, refreshToken: string, user: AuthUser) => void
   logout: () => void
   isAuthenticated: boolean
 }
@@ -34,14 +34,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user])
 
-  function setAuth(newToken: string, newUser: AuthUser) {
+  function setAuth(newToken: string, newRefreshToken: string, newUser: AuthUser) {
     setToken(newToken)
+    localStorage.setItem('refreshToken', newRefreshToken)
     setUser(newUser)
   }
 
   function logout() {
     setToken(null)
     setUser(null)
+    localStorage.removeItem('refreshToken')
   }
 
   return (

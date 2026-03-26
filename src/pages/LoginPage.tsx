@@ -37,14 +37,14 @@ export default function LoginPage() {
     setErrorType(null);
 
     try {
-      const { token, user } = await login(data.email, data.password);
+      const { token, refreshToken, user } = await login(data.email, data.password);
 
       if (user.role !== "ADMIN") {
         setErrorType("forbidden");
         return;
       }
 
-      setAuth(token, user);
+      setAuth(token, refreshToken, user);
       navigate("/");
     } catch (err: unknown) {
       const status = (err as { response?: { status?: number } })?.response

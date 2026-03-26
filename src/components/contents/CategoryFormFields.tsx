@@ -9,7 +9,11 @@ interface CategoryFormFieldsProps {
   colorValue: string;
 }
 
-export default function CategoryFormFields({ register, errors, colorValue }: CategoryFormFieldsProps) {
+export default function CategoryFormFields({
+  register,
+  errors,
+  colorValue,
+}: CategoryFormFieldsProps) {
   return (
     <>
       <Field label="Nom" error={errors.name?.message}>
@@ -17,12 +21,15 @@ export default function CategoryFormFields({ register, errors, colorValue }: Cat
       </Field>
 
       <Field label="Description" error={errors.description?.message}>
-        <Input {...register("description")} placeholder="Description courte (optionnel)" />
+        <Input
+          {...register("description")}
+          placeholder="Description courte (optionnel)"
+        />
       </Field>
 
       <Field label="Couleur" error={errors.color?.message}>
         <div className="flex items-center gap-3">
-          <input
+          <Input
             {...register("color")}
             type="color"
             className="h-9 w-14 cursor-pointer rounded-md border border-input p-1"
@@ -32,7 +39,10 @@ export default function CategoryFormFields({ register, errors, colorValue }: Cat
       </Field>
 
       <Field label="Nom de l'icône" error={errors.iconName?.message}>
-        <Input {...register("iconName")} placeholder="Ex : leaf, heart, brain..." />
+        <Input
+          {...register("iconName")}
+          placeholder="Ex : leaf, heart, brain..."
+        />
       </Field>
     </>
   );
