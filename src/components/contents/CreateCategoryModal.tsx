@@ -12,10 +12,23 @@ interface CreateCategoryModalProps {
   onSuccess: () => void;
 }
 
-export default function CreateCategoryModal({ onClose, onSuccess }: CreateCategoryModalProps) {
-  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<CategoryForm>({
+export default function CreateCategoryModal({
+  onClose,
+  onSuccess,
+}: CreateCategoryModalProps) {
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<CategoryForm>({
     resolver: zodResolver(CategoryFormSchema),
-    defaultValues: { name: "", description: "", color: "#7c1fe6", iconName: "" },
+    defaultValues: {
+      name: "",
+      description: "",
+      color: "#7c1fe6",
+      iconName: "",
+    },
   });
   const colorValue = useWatch({ control, name: "color" });
 
@@ -31,18 +44,33 @@ export default function CreateCategoryModal({ onClose, onSuccess }: CreateCatego
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div
+        className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-base font-semibold text-gray-800">Nouvelle catégorie</h2>
-          <Button variant="ghost" size="icon-sm" onClick={onClose}><X /></Button>
+          <h2 className="text-base font-semibold text-gray-800">
+            Nouvelle catégorie
+          </h2>
+          <Button variant="ghost" size="icon-sm" onClick={onClose}>
+            <X />
+          </Button>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <CategoryFormFields register={register} errors={errors} colorValue={colorValue} />
+          <CategoryFormFields
+            register={register}
+            errors={errors}
+            colorValue={colorValue}
+          />
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="ghost" onClick={onClose}>Annuler</Button>
-            <Button type="submit" disabled={isSubmitting}>Créer</Button>
+            <Button type="button" variant="ghost" onClick={onClose}>
+              Annuler
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              Créer
+            </Button>
           </div>
         </form>
       </div>
