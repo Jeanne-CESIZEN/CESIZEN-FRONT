@@ -13,10 +13,24 @@ interface CreateUserModalProps {
   onSuccess: () => void;
 }
 
-export default function CreateUserModal({ onClose, onSuccess }: CreateUserModalProps) {
-  const { register, handleSubmit, control, formState: { errors, isSubmitting } } = useForm<CreateUserForm>({
+export default function CreateUserModal({
+  onClose,
+  onSuccess,
+}: CreateUserModalProps) {
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateUserForm>({
     resolver: zodResolver(CreateUserSchema),
-    defaultValues: { firstname: "", lastname: "", email: "", role: "USER", password: "" },
+    defaultValues: {
+      firstname: "",
+      lastname: "",
+      email: "",
+      role: "USER",
+      password: "",
+    },
   });
 
   async function onSubmit(data: CreateUserForm) {
@@ -31,25 +45,42 @@ export default function CreateUserModal({ onClose, onSuccess }: CreateUserModalP
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div
+        className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-base font-semibold text-gray-800">Ajouter un utilisateur</h2>
+          <h2 className="text-base font-semibold text-gray-800">
+            Ajouter un utilisateur
+          </h2>
           <Button variant="ghost" size="icon-sm" onClick={onClose}>
             <X />
           </Button>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <UserFormFields register={register} errors={errors} control={control} />
+          <UserFormFields
+            register={register}
+            errors={errors}
+            control={control}
+          />
 
           <Field label="Mot de passe" error={errors.password?.message}>
-            <Input {...register("password")} type="password" placeholder="••••••••" />
+            <Input
+              {...register("password")}
+              type="password"
+              placeholder="••••••••"
+            />
           </Field>
 
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="ghost" onClick={onClose}>Annuler</Button>
-            <Button type="submit" disabled={isSubmitting}>Créer</Button>
+            <Button type="button" variant="ghost" onClick={onClose}>
+              Annuler
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              Créer
+            </Button>
           </div>
         </form>
       </div>
