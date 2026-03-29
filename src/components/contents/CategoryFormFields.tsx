@@ -1,16 +1,19 @@
-import type { FieldErrors, UseFormRegister } from "react-hook-form";
+import { Controller, type Control, type FieldErrors, type UseFormRegister } from "react-hook-form";
 import type { CategoryForm } from "../../schemas/content";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { IconPicker } from "@/components/ui/IconPicker";
 
 interface CategoryFormFieldsProps {
   register: UseFormRegister<CategoryForm>;
+  control: Control<CategoryForm>;
   errors: FieldErrors<CategoryForm>;
   colorValue: string;
 }
 
 export default function CategoryFormFields({
   register,
+  control,
   errors,
   colorValue,
 }: CategoryFormFieldsProps) {
@@ -38,10 +41,13 @@ export default function CategoryFormFields({
         </div>
       </Field>
 
-      <Field label="Nom de l'icône" error={errors.iconName?.message}>
-        <Input
-          {...register("iconName")}
-          placeholder="Ex : leaf, heart, brain..."
+      <Field label="Icône" error={errors.iconName?.message}>
+        <Controller
+          control={control}
+          name="iconName"
+          render={({ field }) => (
+            <IconPicker value={field.value} onChange={field.onChange} />
+          )}
         />
       </Field>
     </>

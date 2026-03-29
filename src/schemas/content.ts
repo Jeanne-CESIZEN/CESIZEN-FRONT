@@ -5,7 +5,7 @@ export const CategorySchema = z.object({
   name: z.string(),
   description: z.string().nullable(),
   color: z.string(),
-  iconName: z.string(),
+  iconName: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

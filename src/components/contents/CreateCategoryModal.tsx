@@ -61,6 +61,7 @@ export default function CreateCategoryModal({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <CategoryFormFields
             register={register}
+            control={control}
             errors={errors}
             colorValue={colorValue}
           />
