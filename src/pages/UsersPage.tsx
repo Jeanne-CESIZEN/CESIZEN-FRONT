@@ -13,12 +13,14 @@ import {
   deactivateUser,
   type User,
 } from "../api/users";
+import { useAuth } from "../hooks/useAuth";
 
 function formatDate(isoDate: string): string {
   return new Date(isoDate).toLocaleDateString("fr-FR");
 }
 
 export default function UsersPage() {
+  const { user: currentUser, logout } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -56,6 +58,10 @@ export default function UsersPage() {
       return;
     try {
       await deleteUser(id);
+      if (id === currentUser?.id) {
+        logout();
+        return;
+      }
       await fetchUsers();
       toast.success("Utilisateur supprimé.");
     } catch {
@@ -66,6 +72,10 @@ export default function UsersPage() {
   async function handleToggleStatus(user: User) {
     try {
       await (user.isActive ? deactivateUser(user.id) : activateUser(user.id));
+      if (user.isActive && user.id === currentUser?.id) {
+        logout();
+        return;
+      }
       await fetchUsers();
       toast.success(
         user.isActive ? "Utilisateur désactivé." : "Utilisateur activé."
