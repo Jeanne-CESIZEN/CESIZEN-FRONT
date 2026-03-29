@@ -14,7 +14,6 @@ export const BaseEmotionSchema = z.object({
   emoji: z.string().nullable().optional(),
   color: z.string().nullable().optional(),
   score: z.number(),
-  order: z.number(),
   createdAt: z.string(),
   updatedAt: z.string(),
 })
@@ -53,7 +52,6 @@ export const EmotionFormSchema = z.object({
   emoji: z.string().min(1, 'Emoji requis'),
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Couleur hex invalide (#rrggbb)'),
   score: z.number().int('Score entier').min(1, 'Minimum 1').max(5, 'Maximum 5'),
-  order: z.number().int('Ordre entier').min(0, 'Minimum 0'),
 })
 
 export type EmotionForm = z.infer<typeof EmotionFormSchema>
