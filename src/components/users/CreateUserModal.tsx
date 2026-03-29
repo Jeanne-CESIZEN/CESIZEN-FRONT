@@ -66,7 +66,7 @@ export default function CreateUserModal({
             control={control}
           />
 
-          <Field label="Mot de passe" error={errors.password?.message}>
+          <Field label="Mot de passe" required error={errors.password?.message}>
             <Input
               {...register("password")}
               type="password"

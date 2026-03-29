@@ -19,7 +19,7 @@ export default function CategoryFormFields({
 }: CategoryFormFieldsProps) {
   return (
     <>
-      <Field label="Nom" error={errors.name?.message}>
+      <Field label="Nom" required error={errors.name?.message}>
         <Input {...register("name")} placeholder="Ex : Gestion du stress" />
       </Field>
 
@@ -30,7 +30,7 @@ export default function CategoryFormFields({
         />
       </Field>
 
-      <Field label="Couleur" error={errors.color?.message}>
+      <Field label="Couleur" required error={errors.color?.message}>
         <div className="flex items-center gap-3">
           <Input
             {...register("color")}
@@ -41,7 +41,7 @@ export default function CategoryFormFields({
         </div>
       </Field>
 
-      <Field label="Icône" error={errors.iconName?.message}>
+      <Field label="Icône" required error={errors.iconName?.message}>
         <Controller
           control={control}
           name="iconName"
@@ -57,13 +57,16 @@ export default function CategoryFormFields({
 interface FieldProps {
   label: string;
   error?: string;
+  required?: boolean;
   children: React.ReactNode;
 }
 
-export function Field({ label, error, children }: FieldProps) {
+export function Field({ label, error, required, children }: FieldProps) {
   return (
     <div className="space-y-1">
-      <Label className="text-xs text-gray-600">{label}</Label>
+      <Label className="text-xs text-gray-600">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      </Label>
       {children}
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>

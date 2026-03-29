@@ -67,7 +67,7 @@ export default function CreateEmotionModal({
           {/* Emoji + Name */}
           <div className="flex gap-3">
             <div className="space-y-1.5 w-24">
-              <Label htmlFor="emoji">Emoji</Label>
+              <Label htmlFor="emoji">Emoji <span className="text-red-500">*</span></Label>
               <Input
                 id="emoji"
                 placeholder="ex: 😊"
@@ -82,7 +82,7 @@ export default function CreateEmotionModal({
               )}
             </div>
             <div className="space-y-1.5 flex-1">
-              <Label htmlFor="name">Nom</Label>
+              <Label htmlFor="name">Nom <span className="text-red-500">*</span></Label>
               <Input
                 id="name"
                 placeholder="Joie"
@@ -99,7 +99,7 @@ export default function CreateEmotionModal({
 
           {/* Color */}
           <div className="space-y-1.5">
-            <Label htmlFor="color">Couleur</Label>
+            <Label htmlFor="color">Couleur <span className="text-red-500">*</span></Label>
             <div className="flex items-center gap-3">
               <Input
                 id="color"
@@ -119,7 +119,7 @@ export default function CreateEmotionModal({
 
           {/* Score */}
           <div className="space-y-1.5">
-            <Label htmlFor="score">Score (1–5)</Label>
+            <Label htmlFor="score">Score (1–5) <span className="text-red-500">*</span></Label>
             <Input
               id="score"
               type="number"

@@ -22,7 +22,7 @@ interface ContentFormFieldsProps {
 export default function ContentFormFields({ register, errors, control, categories }: ContentFormFieldsProps) {
   return (
     <>
-      <Field label="Titre" error={errors.title?.message}>
+      <Field label="Titre" required error={errors.title?.message}>
         <Input {...register("title")} placeholder="Titre de l'article" />
       </Field>
 
@@ -30,7 +30,7 @@ export default function ContentFormFields({ register, errors, control, categorie
         <Input {...register("description")} placeholder="Résumé en une phrase (optionnel)" />
       </Field>
 
-      <Field label="Contenu" error={errors.content?.message}>
+      <Field label="Contenu" required error={errors.content?.message}>
         <Controller
           name="content"
           control={control}
@@ -44,7 +44,7 @@ export default function ContentFormFields({ register, errors, control, categorie
         />
       </Field>
 
-      <Field label="Catégorie" error={errors.categoryId?.message}>
+      <Field label="Catégorie" required error={errors.categoryId?.message}>
         <Controller
           name="categoryId"
           control={control}
@@ -71,13 +71,16 @@ export default function ContentFormFields({ register, errors, control, categorie
 interface FieldProps {
   label: string;
   error?: string;
+  required?: boolean;
   children: React.ReactNode;
 }
 
-export function Field({ label, error, children }: FieldProps) {
+export function Field({ label, error, required, children }: FieldProps) {
   return (
     <div className="space-y-1">
-      <Label className="text-xs text-gray-600">{label}</Label>
+      <Label className="text-xs text-gray-600">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      </Label>
       {children}
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>

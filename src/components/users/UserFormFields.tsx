@@ -25,19 +25,19 @@ export default function UserFormFields<T extends UpdateUserForm & FieldValues>({
   return (
     <>
       <div className="grid grid-cols-2 gap-4">
-        <Field label="Prénom" error={errors.firstname?.message as string | undefined}>
+        <Field label="Prénom" required error={errors.firstname?.message as string | undefined}>
           <Input {...register("firstname" as Parameters<typeof register>[0])} placeholder="Jeanne" />
         </Field>
-        <Field label="Nom" error={errors.lastname?.message as string | undefined}>
+        <Field label="Nom" required error={errors.lastname?.message as string | undefined}>
           <Input {...register("lastname" as Parameters<typeof register>[0])} placeholder="Grenet" />
         </Field>
       </div>
 
-      <Field label="Email" error={errors.email?.message as string | undefined}>
+      <Field label="Email" required error={errors.email?.message as string | undefined}>
         <Input {...register("email" as Parameters<typeof register>[0])} type="email" placeholder="jeanne@exemple.fr" />
       </Field>
 
-      <Field label="Rôle" error={errors.role?.message as string | undefined}>
+      <Field label="Rôle" required error={errors.role?.message as string | undefined}>
         <Controller
           name={"role" as Parameters<typeof control.register>[0]}
           control={control}
@@ -61,13 +61,16 @@ export default function UserFormFields<T extends UpdateUserForm & FieldValues>({
 interface FieldProps {
   label: string;
   error?: string;
+  required?: boolean;
   children: React.ReactNode;
 }
 
-export function Field({ label, error, children }: FieldProps) {
+export function Field({ label, error, required, children }: FieldProps) {
   return (
     <div className="space-y-1">
-      <Label className="text-xs text-gray-600">{label}</Label>
+      <Label className="text-xs text-gray-600">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      </Label>
       {children}
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
