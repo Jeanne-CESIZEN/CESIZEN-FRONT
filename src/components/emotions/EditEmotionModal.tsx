@@ -48,7 +48,6 @@ export default function EditEmotionModal({
       emoji: emotion.emoji ?? "",
       color: emotion.color ?? "",
       score: emotion.score,
-      order: emotion.order,
     },
   });
 
@@ -169,39 +168,22 @@ export default function EditEmotionModal({
             )}
           </div>
 
-          {/* Score + Order */}
-          <div className="flex gap-3">
-            <div className="space-y-1.5 flex-1">
-              <Label htmlFor="score">Score (1–5)</Label>
-              <Input
-                id="score"
-                type="number"
-                min={1}
-                max={5}
-                aria-invalid={!!errors.score}
-                {...register("score", { valueAsNumber: true })}
-              />
-              {errors.score && (
-                <p className="text-xs text-destructive">
-                  {errors.score.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-1.5 flex-1">
-              <Label htmlFor="order">Ordre</Label>
-              <Input
-                id="order"
-                type="number"
-                min={0}
-                aria-invalid={!!errors.order}
-                {...register("order", { valueAsNumber: true })}
-              />
-              {errors.order && (
-                <p className="text-xs text-destructive">
-                  {errors.order.message}
-                </p>
-              )}
-            </div>
+          {/* Score */}
+          <div className="space-y-1.5">
+            <Label htmlFor="score">Score (1–5)</Label>
+            <Input
+              id="score"
+              type="number"
+              min={1}
+              max={5}
+              aria-invalid={!!errors.score}
+              {...register("score", { valueAsNumber: true })}
+            />
+            {errors.score && (
+              <p className="text-xs text-destructive">
+                {errors.score.message}
+              </p>
+            )}
           </div>
 
           {/* Sub-emotions */}

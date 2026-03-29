@@ -20,7 +20,7 @@ export default function EmotionsPage() {
       setLoading(true)
       setError(null)
       const data = await getEmotions()
-      setEmotions(data.sort((a, b) => a.order - b.order))
+      setEmotions(data)
     } catch {
       setError('Impossible de charger les émotions.')
     } finally {
@@ -90,6 +90,8 @@ export default function EmotionsPage() {
                         style={{ backgroundColor: emotion.color ?? '#e5e7eb' }}
                       />
                       <span className="text-xs text-gray-400 font-mono">{emotion.color}</span>
+                      <span className="text-xs text-gray-400">·</span>
+                      <span className="text-xs text-gray-400">Score {emotion.score}/5</span>
                     </div>
                   </div>
                 </div>
