@@ -33,7 +33,7 @@ export default function EditCategoryModal({
       name: category.name,
       description: category.description ?? "",
       color: category.color,
-      iconName: category.iconName,
+      iconName: category.iconName ?? "",
     },
   });
   const colorValue = useWatch({ control, name: "color" });
@@ -67,6 +67,7 @@ export default function EditCategoryModal({
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <CategoryFormFields
             register={register}
+            control={control}
             errors={errors}
             colorValue={colorValue}
           />

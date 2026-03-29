@@ -1,4 +1,5 @@
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/Badge";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import type { Category } from "../../schemas/content";
 
 interface CategoryChipProps {
@@ -15,6 +16,7 @@ export default function CategoryChip({ category }: CategoryChipProps) {
         borderColor: `${category.color}55`,
       }}
     >
+      <DynamicIcon name={category.iconName} size={12} />
       {category.name}
     </Badge>
   );

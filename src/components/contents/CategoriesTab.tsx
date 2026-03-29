@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -80,7 +81,9 @@ export default function CategoriesTab({
       </div>
 
       {categories.length === 0 ? (
-        <p className="text-sm text-gray-400 text-center py-8">Aucune catégorie.</p>
+        <p className="text-sm text-gray-400 text-center py-8">
+          Aucune catégorie.
+        </p>
       ) : (
         <>
           {/* Mobile / tablette : cartes */}
@@ -88,22 +91,50 @@ export default function CategoriesTab({
             {categories.map((cat) => {
               const count = getArticleCount(cat.id);
               return (
-                <div key={cat.id} className="bg-white rounded-2xl px-5 py-4 flex items-center justify-between gap-3">
+                <div
+                  key={cat.id}
+                  className="bg-white rounded-2xl px-5 py-4 flex items-center justify-between gap-3"
+                >
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="inline-block w-4 h-4 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
+                    <span
+                      className="inline-block w-4 h-4 rounded-full shrink-0"
+                      style={{ backgroundColor: cat.color }}
+                    />
+                    <DynamicIcon name={cat.iconName} className="shrink-0" />
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{cat.name}</p>
+                      <p className="text-sm font-medium text-gray-800 truncate">
+                        {cat.name}
+                      </p>
                       {cat.description && (
-                        <p className="text-xs text-gray-400 truncate mt-0.5">{cat.description}</p>
+                        <p className="text-xs text-gray-400 truncate mt-0.5">
+                          {cat.description}
+                        </p>
                       )}
-                      <p className="text-xs text-gray-400 mt-0.5">{count} article{count > 1 ? "s" : ""}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        {count} article{count > 1 ? "s" : ""}
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
-                    <Button variant="ghost" size="icon-sm" className="text-blue-500 hover:text-blue-700" onClick={() => setEditCategory(cat)}>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="text-blue-500 hover:text-blue-700"
+                      onClick={() => setEditCategory(cat)}
+                    >
                       <Pencil size={14} />
                     </Button>
-                    <Button variant="ghost" size="icon-sm" className="text-red-400 hover:text-red-600" onClick={() => handleDelete(cat)} title={count > 0 ? `${count} article(s) rattaché(s)` : "Supprimer"}>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="text-red-400 hover:text-red-600"
+                      onClick={() => handleDelete(cat)}
+                      title={
+                        count > 0
+                          ? `${count} article(s) rattaché(s)`
+                          : "Supprimer"
+                      }
+                    >
                       <Trash2 size={16} />
                     </Button>
                   </div>
@@ -118,6 +149,7 @@ export default function CategoriesTab({
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-16">COULEUR</TableHead>
+                  <TableHead className="w-12">ICÔNE</TableHead>
                   <TableHead className="w-48">NOM</TableHead>
                   <TableHead>DESCRIPTION</TableHead>
                   <TableHead className="w-28">ARTICLES</TableHead>
@@ -130,19 +162,46 @@ export default function CategoriesTab({
                   return (
                     <TableRow key={cat.id}>
                       <TableCell>
-                        <span className="inline-block w-4 h-4 rounded-full" style={{ backgroundColor: cat.color }} />
+                        <span
+                          className="inline-block w-4 h-4 rounded-full"
+                          style={{ backgroundColor: cat.color }}
+                        />
                       </TableCell>
-                      <TableCell className="text-sm font-medium text-gray-800">{cat.name}</TableCell>
+                      <TableCell>
+                        <DynamicIcon name={cat.iconName} className="shrink-0" />
+                      </TableCell>
+                      <TableCell className="text-sm font-medium text-gray-800">
+                        {cat.name}
+                      </TableCell>
                       <TableCell className="text-sm text-gray-500">
-                        {cat.description ?? <span className="text-gray-300">—</span>}
+                        {cat.description ?? (
+                          <span className="text-gray-300">—</span>
+                        )}
                       </TableCell>
-                      <TableCell className="text-sm text-gray-500">{count}</TableCell>
+                      <TableCell className="text-sm text-gray-500">
+                        {count}
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1">
-                          <Button variant="ghost" size="sm" className="text-blue-500 hover:text-blue-700 gap-1.5" onClick={() => setEditCategory(cat)}>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-blue-500 hover:text-blue-700 gap-1.5"
+                            onClick={() => setEditCategory(cat)}
+                          >
                             <Pencil size={14} />
                           </Button>
-                          <Button variant="ghost" size="icon-sm" className="text-red-400 hover:text-red-600" onClick={() => handleDelete(cat)} title={count > 0 ? `${count} article(s) rattaché(s)` : "Supprimer"}>
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            className="text-red-400 hover:text-red-600"
+                            onClick={() => handleDelete(cat)}
+                            title={
+                              count > 0
+                                ? `${count} article(s) rattaché(s)`
+                                : "Supprimer"
+                            }
+                          >
                             <Trash2 size={16} />
                           </Button>
                         </div>
