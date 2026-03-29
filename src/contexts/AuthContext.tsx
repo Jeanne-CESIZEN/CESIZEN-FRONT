@@ -1,5 +1,6 @@
-import { createContext, useState, useEffect, type ReactNode } from 'react'
+import { createContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import type { AuthUser } from '../api/auth'
+import { onForceLogout } from '../lib/authEvents'
 
 interface AuthContextValue {
   user: AuthUser | null
@@ -40,11 +41,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(newUser)
   }
 
-  function logout() {
+  const logout = useCallback(() => {
     setToken(null)
     setUser(null)
+    localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
-  }
+    localStorage.removeItem('user')
+  }, [])
+
+  useEffect(() => {
+    return onForceLogout(logout)
+  }, [logout])
 
   return (
     <AuthContext.Provider value={{ user, token, setAuth, logout, isAuthenticated: !!token }}>

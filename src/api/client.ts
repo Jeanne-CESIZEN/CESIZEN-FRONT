@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { emitForceLogout } from '../lib/authEvents'
 import { refreshAccessToken } from './auth'
 
 const apiClient = axios.create({
@@ -29,12 +30,10 @@ apiClient.interceptors.response.use(
           original.headers.Authorization = `Bearer ${newToken}`
           return apiClient(original)
         } catch {
-          localStorage.removeItem('token')
-          localStorage.removeItem('refreshToken')
-          window.location.href = '/login'
+          emitForceLogout()
         }
       } else {
-        window.location.href = '/login'
+        emitForceLogout()
       }
     }
     return Promise.reject(error)
