@@ -70,7 +70,8 @@ export default function CreateEmotionModal({
               <Label htmlFor="emoji">Emoji</Label>
               <Input
                 id="emoji"
-                placeholder="😊"
+                placeholder="ex: 😊"
+                className="placeholder:opacity-60"
                 aria-invalid={!!errors.emoji}
                 {...register("emoji")}
               />
@@ -128,9 +129,7 @@ export default function CreateEmotionModal({
               {...register("score", { valueAsNumber: true })}
             />
             {errors.score && (
-              <p className="text-xs text-destructive">
-                {errors.score.message}
-              </p>
+              <p className="text-xs text-destructive">{errors.score.message}</p>
             )}
           </div>
 
