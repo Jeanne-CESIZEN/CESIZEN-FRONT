@@ -13,6 +13,7 @@ import {
 import { deleteContent, type Content, type Category } from "../../api/contents";
 import CreateContentModal from "./CreateContentModal";
 import EditContentModal from "./EditContentModal";
+import ArticlePreviewModal from "./ArticlePreviewModal";
 import CategoryChip from "./CategoryChip";
 
 interface ArticlesTabProps {
@@ -38,6 +39,7 @@ export default function ArticlesTab({
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [createOpen, setCreateOpen] = useState(false);
   const [editContent, setEditContent] = useState<Content | null>(null);
+  const [previewContent, setPreviewContent] = useState<Content | null>(null);
 
   async function handleDelete(id: string) {
     if (!window.confirm("Voulez-vous vraiment supprimer cet article ?")) return;
@@ -79,6 +81,13 @@ export default function ArticlesTab({
           categories={categories}
           onClose={() => setEditContent(null)}
           onSuccess={onRefresh}
+        />
+      )}
+      {previewContent && (
+        <ArticlePreviewModal
+          article={previewContent}
+          category={getCategory(previewContent.categoryId)}
+          onClose={() => setPreviewContent(null)}
         />
       )}
 
@@ -140,7 +149,10 @@ export default function ArticlesTab({
               key={article.id}
               className="bg-white rounded-2xl px-6 py-4 flex items-start gap-4"
             >
-              <div className="flex-1 min-w-0">
+              <div
+                className="flex-1 min-w-0 cursor-pointer"
+                onClick={() => setPreviewContent(article)}
+              >
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="text-sm font-semibold text-gray-800">
                     {article.title}
