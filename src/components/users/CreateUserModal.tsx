@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import { toast } from "sonner";
@@ -7,6 +7,8 @@ import { createUser } from "../../api/users";
 import UserFormFields, { Field } from "./UserFormFields";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+const PASSWORD_MIN = 8;
 
 interface CreateUserModalProps {
   onClose: () => void;
@@ -32,6 +34,9 @@ export default function CreateUserModal({
       password: "",
     },
   });
+
+  const passwordValue = useWatch({ control, name: "password" });
+  const passwordLength = passwordValue?.length ?? 0;
 
   async function onSubmit(data: CreateUserForm) {
     try {
@@ -72,6 +77,9 @@ export default function CreateUserModal({
               type="password"
               placeholder="••••••••"
             />
+            <p className={`text-xs mt-1 ${passwordLength >= PASSWORD_MIN ? "text-green-500" : "text-gray-400"}`}>
+              {passwordLength}/{PASSWORD_MIN} caractères minimum
+            </p>
           </Field>
 
           <div className="flex justify-end gap-2 pt-2">
