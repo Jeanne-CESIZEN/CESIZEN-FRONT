@@ -1,22 +1,24 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { Toaster } from 'sonner'
-import { AuthProvider } from './contexts/AuthContext'
-import { useAuth } from './hooks/useAuth'
-import LoginPage from './pages/LoginPage'
-import HomePage from './pages/HomePage'
-import UsersPage from './pages/UsersPage'
-import ContentsPage from './pages/ContentsPage'
-import EmotionsPage from './pages/EmotionsPage'
-import type { ReactNode } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "sonner";
+import { AuthProvider } from "./contexts/AuthContext";
+import { useAuth } from "./hooks/useAuth";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
+import UsersPage from "./pages/UsersPage";
+import ContentsPage from "./pages/ContentsPage";
+import EmotionsPage from "./pages/EmotionsPage";
+import type { ReactNode } from "react";
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
-  const { isAuthenticated } = useAuth()
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return null;
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
 function PublicRoute({ children }: { children: ReactNode }) {
-  const { isAuthenticated } = useAuth()
-  return isAuthenticated ? <Navigate to="/" replace /> : <>{children}</>
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return null;
+  return isAuthenticated ? <Navigate to="/" replace /> : <>{children}</>;
 }
 
 export default function App() {
@@ -69,5 +71,5 @@ export default function App() {
         </Routes>
       </AuthProvider>
     </BrowserRouter>
-  )
+  );
 }

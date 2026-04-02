@@ -1,73 +1,176 @@
-# React + TypeScript + Vite
+# CESIZEN-FRONT
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface web d'administration de l'application CESIZen.
 
-Currently, two official plugins are available:
+## Stack technique
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Technologie | Version | Rôle |
+|------------|---------|------|
+| React | 19.2.4 | Framework UI |
+| TypeScript | 5.9.3 | Langage |
+| Vite | 8.0.1 | Bundler / Dev server |
+| Tailwind CSS | 4.2.2 | Styles |
+| shadcn/ui + Base UI | — | Composants UI |
+| React Router DOM | 7.13.1 | Routing |
+| React Hook Form | 7.72.0 | Gestion des formulaires |
+| Zod | — | Validation des formulaires |
+| Axios | 1.13.6 | Client HTTP |
+| TipTap | 3.20.5 | Éditeur de texte riche |
+| Lucide React | 0.577.0 | Icônes |
+| Sonner | 2.0.7 | Notifications toast |
 
-## React Compiler
+## Prérequis
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js >= 20.x
+- npm >= 10.x
+- **CESIZEN-API en cours d'exécution** sur `http://localhost:3000`
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1. Se placer dans le dossier
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd CESIZEN-FRONT
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Installer les dépendances
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+npm install
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 3. Configurer les variables d'environnement
+
+Copier le fichier d'exemple :
+
+```bash
+cp .env.example .env
+```
+
+Éditer `.env` :
+
+```env
+VITE_API_URL=http://localhost:3000/api
+```
+
+> **Note** : si vous accédez à l'API depuis une autre machine sur le réseau local, remplacez `localhost` par l'adresse IP de la machine hébergeant l'API (ex: `http://192.168.1.10:3000/api`).
+
+### 4. Démarrer le serveur de développement
+
+```bash
+npm run dev
+```
+
+L'application est accessible sur `http://localhost:5173`.
+
+---
+
+## Scripts disponibles
+
+| Commande | Description |
+|----------|-------------|
+| `npm run dev` | Démarre le serveur de développement avec hot reload |
+| `npm run build` | Compile le projet pour la production (dossier `dist/`) |
+| `npm run preview` | Prévisualise le build de production localement |
+| `npm run lint` | Analyse le code avec ESLint |
+
+---
+
+## Structure du projet
+
+```
+CESIZEN-FRONT/
+├── public/                    # Fichiers statiques
+├── src/
+│   ├── main.tsx               # Point d'entrée React
+│   ├── App.tsx                # Router principal + AuthProvider
+│   ├── index.css              # Styles globaux
+│   ├── pages/                 # Composants de pages (routes)
+│   │   ├── LoginPage.tsx      # Connexion
+│   │   ├── HomePage.tsx       # Tableau de bord
+│   │   ├── UsersPage.tsx      # Gestion des utilisateurs (admin)
+│   │   ├── ContentsPage.tsx   # Gestion articles & catégories (admin)
+│   │   └── EmotionsPage.tsx   # Gestion des émotions (admin)
+│   ├── components/
+│   │   ├── ui/                # Composants shadcn/ui génériques
+│   │   ├── layout/            # Composants de mise en page
+│   │   ├── contents/          # Composants articles / catégories
+│   │   ├── users/             # Composants gestion utilisateurs
+│   │   └── emotions/          # Composants gestion émotions
+│   ├── contexts/
+│   │   └── AuthContext.tsx    # Contexte d'authentification global
+│   ├── hooks/
+│   │   └── useAuth.ts         # Hook d'accès au contexte auth
+│   ├── api/                   # Configuration Axios + appels API
+│   ├── lib/                   # Utilitaires et helpers
+│   └── schemas/               # Schémas de validation Zod
+├── components.json            # Configuration shadcn/ui
+├── vite.config.ts             # Configuration Vite
+├── tsconfig.json              # Configuration TypeScript
+├── eslint.config.js           # Configuration ESLint
+├── .env.example               # Modèle de variables d'environnement
+└── package.json
+```
+
+---
+
+## Pages et fonctionnalités
+
+### Login (`/login`)
+- Formulaire de connexion email / mot de passe
+- Redirection automatique si déjà connecté
+
+### Home (`/`)
+- Tableau de bord principal
+- Accès aux différentes sections d'administration
+
+### Users (`/users`) — Accès admin uniquement
+- Liste de tous les utilisateurs
+- Activation / désactivation des comptes
+- Modification des rôles
+
+### Contents (`/contents`) — Accès admin uniquement
+- Gestion des **catégories** (créer, modifier, supprimer)
+- Gestion des **articles** avec éditeur de texte riche (TipTap)
+
+### Emotions (`/emotions`) — Accès admin uniquement
+- Gestion des **émotions de base** (6 émotions)
+- Gestion des **émotions détaillées** (~36 sous-émotions)
+
+---
+
+## Authentification
+
+L'application utilise un système JWT avec :
+- **Access token** — stocké en mémoire (contexte React), durée courte
+- **Refresh token** — utilisé automatiquement pour renouveler l'access token
+
+Le `AuthContext` expose :
+- `user` — données de l'utilisateur connecté
+- `login(email, password)` — connexion
+- `logout()` — déconnexion
+
+Les routes protégées redirigent vers `/login` si l'utilisateur n'est pas authentifié.
+
+---
+
+## Résolution des problèmes courants
+
+**L'application affiche une erreur de réseau**
+- Vérifier que `CESIZEN-API` est bien démarré sur le port `3000`
+- Vérifier la valeur de `VITE_API_URL` dans `.env`
+- S'assurer que CORS est activé côté API (configuré pour `localhost:5173` par défaut)
+
+**Les modifications de `.env` ne sont pas prises en compte**
+- Toute modification de `.env` nécessite de redémarrer le serveur de développement (`Ctrl+C` puis `npm run dev`)
+
+**Erreur TypeScript à la compilation**
+```bash
+npx tsc --noEmit
+```
+
+**Problème de dépendances**
+```bash
+rm -rf node_modules
+npm install
 ```
