@@ -4,20 +4,20 @@ Interface web d'administration de l'application CESIZen.
 
 ## Stack technique
 
-| Technologie | Version | Rôle |
-|------------|---------|------|
-| React | 19.2.4 | Framework UI |
-| TypeScript | 5.9.3 | Langage |
-| Vite | 8.0.1 | Bundler / Dev server |
-| Tailwind CSS | 4.2.2 | Styles |
-| shadcn/ui + Base UI | — | Composants UI |
-| React Router DOM | 7.13.1 | Routing |
-| React Hook Form | 7.72.0 | Gestion des formulaires |
-| Zod | — | Validation des formulaires |
-| Axios | 1.13.6 | Client HTTP |
-| TipTap | 3.20.5 | Éditeur de texte riche |
-| Lucide React | 0.577.0 | Icônes |
-| Sonner | 2.0.7 | Notifications toast |
+| Technologie         | Version | Rôle                       |
+| ------------------- | ------- | -------------------------- |
+| React               | 19.2.4  | Framework UI               |
+| TypeScript          | 5.9.3   | Langage                    |
+| Vite                | 8.0.1   | Bundler / Dev server       |
+| Tailwind CSS        | 4.2.2   | Styles                     |
+| shadcn/ui + Base UI | —       | Composants UI              |
+| React Router DOM    | 7.13.1  | Routing                    |
+| React Hook Form     | 7.72.0  | Gestion des formulaires    |
+| Zod                 | —       | Validation des formulaires |
+| Axios               | 1.13.6  | Client HTTP                |
+| TipTap              | 3.20.5  | Éditeur de texte riche     |
+| Lucide React        | 0.577.0 | Icônes                     |
+| Sonner              | 2.0.7   | Notifications toast        |
 
 ## Prérequis
 
@@ -67,12 +67,12 @@ L'application est accessible sur `http://localhost:5173`.
 
 ## Scripts disponibles
 
-| Commande | Description |
-|----------|-------------|
-| `npm run dev` | Démarre le serveur de développement avec hot reload |
-| `npm run build` | Compile le projet pour la production (dossier `dist/`) |
-| `npm run preview` | Prévisualise le build de production localement |
-| `npm run lint` | Analyse le code avec ESLint |
+| Commande          | Description                                            |
+| ----------------- | ------------------------------------------------------ |
+| `npm run dev`     | Démarre le serveur de développement avec hot reload    |
+| `npm run build`   | Compile le projet pour la production (dossier `dist/`) |
+| `npm run preview` | Prévisualise le build de production localement         |
+| `npm run lint`    | Analyse le code avec ESLint                            |
 
 ---
 
@@ -110,67 +110,4 @@ CESIZEN-FRONT/
 ├── eslint.config.js           # Configuration ESLint
 ├── .env.example               # Modèle de variables d'environnement
 └── package.json
-```
-
----
-
-## Pages et fonctionnalités
-
-### Login (`/login`)
-- Formulaire de connexion email / mot de passe
-- Redirection automatique si déjà connecté
-
-### Home (`/`)
-- Tableau de bord principal
-- Accès aux différentes sections d'administration
-
-### Users (`/users`) — Accès admin uniquement
-- Liste de tous les utilisateurs
-- Activation / désactivation des comptes
-- Modification des rôles
-
-### Contents (`/contents`) — Accès admin uniquement
-- Gestion des **catégories** (créer, modifier, supprimer)
-- Gestion des **articles** avec éditeur de texte riche (TipTap)
-
-### Emotions (`/emotions`) — Accès admin uniquement
-- Gestion des **émotions de base** (6 émotions)
-- Gestion des **émotions détaillées** (~36 sous-émotions)
-
----
-
-## Authentification
-
-L'application utilise un système JWT avec :
-- **Access token** — stocké en mémoire (contexte React), durée courte
-- **Refresh token** — utilisé automatiquement pour renouveler l'access token
-
-Le `AuthContext` expose :
-- `user` — données de l'utilisateur connecté
-- `login(email, password)` — connexion
-- `logout()` — déconnexion
-
-Les routes protégées redirigent vers `/login` si l'utilisateur n'est pas authentifié.
-
----
-
-## Résolution des problèmes courants
-
-**L'application affiche une erreur de réseau**
-- Vérifier que `CESIZEN-API` est bien démarré sur le port `3000`
-- Vérifier la valeur de `VITE_API_URL` dans `.env`
-- S'assurer que CORS est activé côté API (configuré pour `localhost:5173` par défaut)
-
-**Les modifications de `.env` ne sont pas prises en compte**
-- Toute modification de `.env` nécessite de redémarrer le serveur de développement (`Ctrl+C` puis `npm run dev`)
-
-**Erreur TypeScript à la compilation**
-```bash
-npx tsc --noEmit
-```
-
-**Problème de dépendances**
-```bash
-rm -rf node_modules
-npm install
 ```
