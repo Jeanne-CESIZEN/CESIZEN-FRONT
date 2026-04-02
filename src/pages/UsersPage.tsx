@@ -4,6 +4,14 @@ import { Search, Plus, Pencil, Ban, Trash2 } from "lucide-react";
 import MainLayout from "../components/layout/MainLayout";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
 import CreateUserModal from "../components/users/CreateUserModal";
 import EditUserModal from "../components/users/EditUserModal";
 import {
@@ -200,9 +208,9 @@ export default function UsersPage() {
 
           {/* Desktop : tableau */}
           <div className="bg-white rounded-2xl overflow-hidden hidden md:block">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-100">
+            <Table>
+              <TableHeader>
+                <TableRow>
                   {[
                     "NOM",
                     "EMAIL",
@@ -211,28 +219,20 @@ export default function UsersPage() {
                     "INSCRIPTION",
                     "ACTIONS",
                   ].map((col) => (
-                    <th
-                      key={col}
-                      className="px-6 py-3 text-left text-xs font-semibold text-gray-400 tracking-wide"
-                    >
-                      {col}
-                    </th>
+                    <TableHead key={col}>{col}</TableHead>
                   ))}
-                </tr>
-              </thead>
-              <tbody>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {filteredUsers.map((user) => (
-                  <tr
-                    key={user.id}
-                    className="border-b border-gray-50 last:border-0"
-                  >
-                    <td className="px-6 py-4 text-sm font-medium text-gray-800">
+                  <TableRow key={user.id}>
+                    <TableCell className="text-sm font-medium text-gray-800">
                       {user.firstname} {user.lastname}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    </TableCell>
+                    <TableCell className="text-sm text-gray-500">
                       {user.email}
-                    </td>
-                    <td className="px-6 py-4">
+                    </TableCell>
+                    <TableCell>
                       <Badge
                         variant={
                           user.role === "ADMIN" ? "role-admin" : "role-user"
@@ -242,16 +242,16 @@ export default function UsersPage() {
                           ? "Administrateur"
                           : "Utilisateur"}
                       </Badge>
-                    </td>
-                    <td className="px-6 py-4">
+                    </TableCell>
+                    <TableCell>
                       <Badge variant={user.isActive ? "active" : "inactive"}>
                         {user.isActive ? "Actif" : "Inactif"}
                       </Badge>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    </TableCell>
+                    <TableCell className="text-sm text-gray-500">
                       {formatDate(user.createdAt)}
-                    </td>
-                    <td className="px-6 py-4">
+                    </TableCell>
+                    <TableCell>
                       <div className="flex items-center gap-1">
                         <Button
                           variant="ghost"
@@ -280,11 +280,11 @@ export default function UsersPage() {
                           <Trash2 />
                         </Button>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </>
       )}
