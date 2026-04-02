@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ShieldAlert } from "lucide-react";
 import MainLayout from "../components/layout/MainLayout";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -8,6 +9,8 @@ import CategoriesTab from "@/components/contents/CategoriesTab";
 import { getContents, getCategories, type Content, type Category } from "../api/contents";
 
 export default function ContentsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentTab = searchParams.get("tab") ?? "articles";
   const [contents, setContents] = useState<Content[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,7 +59,7 @@ export default function ContentsPage() {
         <StatCard label="Catégories" value={categories.length} color="text-primary" />
       </div>
 
-      <Tabs defaultValue="articles" className="mb-6">
+      <Tabs value={currentTab} onValueChange={(v) => setSearchParams({ tab: v })} className="mb-6">
         <TabsList className="mb-6">
           <TabsTrigger value="articles">Articles</TabsTrigger>
           <TabsTrigger value="categories">Catégories</TabsTrigger>
