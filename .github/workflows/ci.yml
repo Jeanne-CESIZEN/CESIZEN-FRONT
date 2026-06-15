@@ -1,0 +1,51 @@
+name: CI - Front
+
+# Pipeline front-end : analyse statique (ESLint), build de production
+# puis tests End-to-End avec Selenium sur l'application servie.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Annule un run précédent encore en cours sur la même réf
+concurrency:
+  group: ci-front-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-e2e:
+    name: Lint, build & tests Selenium
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installation de Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Installation des dépendances
+        run: npm ci
+
+      - name: Analyse statique du code (ESLint)
+        run: npm run lint
+
+      - name: Build de production
+        run: npm run build
+
+      - name: Démarrage du serveur de prévisualisation
+        run: npm run preview &
+
+      - name: Attente du démarrage du serveur
+        run: |
+          npx --yes wait-on http://localhost:4173 --timeout 60000
+
+      - name: Tests End-to-End (Selenium)
+        run: npm run test:e2e
+        env:
+          BASE_URL: http://localhost:4173
