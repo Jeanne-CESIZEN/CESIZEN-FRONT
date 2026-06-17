@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build-and-e2e:
-    name: Lint, build & tests Selenium
+    name: Lint, build & tests E2E (Playwright)
     runs-on: ubuntu-latest
 
     steps:
@@ -35,20 +35,20 @@ jobs:
       - name: Analyse statique du code (ESLint)
         run: npm run lint
 
-      - name: Build de production
-        run: npm run build
+      - name: Installation du navigateur Playwright
+        run: npx playwright install --with-deps chromium
 
-      - name: Démarrage du serveur de prévisualisation
-        run: npm run preview &
-
-      - name: Attente du démarrage du serveur
-        run: |
-          npx --yes wait-on http://localhost:4173 --timeout 60000
-
-      - name: Tests End-to-End (Selenium)
+      - name: Tests End-to-End (Playwright)
+        # webServer (playwright.config) build et sert l'app automatiquement
         run: npm run test:e2e
-        env:
-          BASE_URL: http://localhost:4173
+
+      - name: Publication du rapport en cas d'échec
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
 
   # ─── Build de l'image + publication sur GHCR ────────────────────────────────
   # Uniquement sur push/dispatch (pas sur les PR). Le tag et l'URL d'API dépendent
