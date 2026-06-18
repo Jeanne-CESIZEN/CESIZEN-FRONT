@@ -1,12 +1,16 @@
 name: CI - Front
 
-# Pipeline front-end : analyse statique (ESLint), build de production
-# puis tests End-to-End avec Selenium sur l'application servie.
+# Pipeline front-end :
+#  - PR vers develop/main : ESLint + tests E2E (Playwright) + scan deps + secrets
+#  - Push develop         : idem + build, scan image & push :staging
+#  - Push main            : idem + build, scan image & push :prod
+#  - Tag git v*           : idem + push :prod + :vX.Y.Z (release tracée)
 on:
   pull_request:
     branches: [develop, main]
   push:
     branches: [develop, main]
+    tags: ["v*"]
   workflow_dispatch:
 
 # Annule un run précédent encore en cours sur la même réf
@@ -50,36 +54,80 @@ jobs:
           path: playwright-report/
           retention-days: 7
 
-  # ─── Build de l'image + publication sur GHCR ────────────────────────────────
-  # Uniquement sur push/dispatch (pas sur les PR). Le tag et l'URL d'API dépendent
-  # de la branche :  develop -> :staging (VITE_API_URL_STAGING)
-  #                   main    -> :prod    (VITE_API_URL_PROD)
-  # Comme Vite inline l'URL au build, chaque image est bien spécifique à son env.
+  # ─── Scan de vulnérabilités des dépendances (Trivy fs) ──────────────────────
+  security:
+    name: Scan dépendances (Trivy)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installation de Trivy
+        run: curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
+
+      - name: Rapport des vulnérabilités (HIGH/CRITICAL, informatif)
+        run: trivy fs --scanners vuln --severity HIGH,CRITICAL --no-progress --exit-code 0 .
+
+      - name: Échec si vulnérabilité CRITICAL corrigeable
+        run: trivy fs --scanners vuln --severity CRITICAL --ignore-unfixed --no-progress --exit-code 1 .
+
+  # ─── Détection de secrets commités (gitleaks) ───────────────────────────────
+  gitleaks:
+    name: Détection de secrets (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Scan des secrets
+        run: |
+          docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:latest \
+            detect --source=/repo --redact --verbose
+
+  # ─── Build + scan de l'image + publication sur GHCR ─────────────────────────
+  # VITE_API_URL est injecté au build (Vite l'inline) -> une image par env.
+  # Tags : develop -> :staging | main -> :prod | tag v* -> :prod + :vX.Y.Z
   build-push:
-    name: Build & Push (GHCR)
-    needs: build-and-e2e
+    name: Build, scan & push (GHCR)
+    needs: [build-and-e2e, security, gitleaks]
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+      security-events: write
     env:
       IMAGE_NAME: ghcr.io/jeanne-cesizen/cesizen-front
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
 
-      - name: Détermination de l'environnement, de l'URL d'API et du SHA
+      - name: Détermination de l'environnement, de l'URL d'API et des tags
         id: meta
         run: |
-          if [ "${{ github.ref_name }}" = "main" ]; then
-            echo "env=prod" >> "$GITHUB_OUTPUT"
-            echo "api_url=${{ vars.VITE_API_URL_PROD }}" >> "$GITHUB_OUTPUT"
+          SHA=$(git rev-parse --short HEAD)
+          VERSION=""
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            ENV=prod
+            API_URL="${{ vars.VITE_API_URL_PROD }}"
+            VERSION="${{ github.ref_name }}"
+          elif [ "${{ github.ref_name }}" = "main" ]; then
+            ENV=prod
+            API_URL="${{ vars.VITE_API_URL_PROD }}"
           else
-            echo "env=staging" >> "$GITHUB_OUTPUT"
-            echo "api_url=${{ vars.VITE_API_URL_STAGING }}" >> "$GITHUB_OUTPUT"
+            ENV=staging
+            API_URL="${{ vars.VITE_API_URL_STAGING }}"
           fi
-          echo "sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "api_url=${API_URL}" >> "$GITHUB_OUTPUT"
+          {
+            echo "tags<<EOF"
+            echo "${IMAGE_NAME}:${ENV}"
+            echo "${IMAGE_NAME}:sha-${SHA}"
+            [ -n "$VERSION" ] && echo "${IMAGE_NAME}:${VERSION}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Configuration de Buildx
         uses: docker/setup-buildx-action@v3
@@ -91,15 +139,51 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build & push
+      # 1. Build local pour scanner avant de pousser (cache GHA peuplé)
+      - name: Build local (pour scan, sans push)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          push: false
+          build-args: |
+            VITE_API_URL=${{ steps.meta.outputs.api_url }}
+          tags: scan-target:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # 2. Trivy sur l'image -> SARIF (informatif)
+      - name: Trivy — rapport image (SARIF)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: scan-target:latest
+          severity: HIGH,CRITICAL
+          exit-code: "0"
+          format: sarif
+          output: trivy-results.sarif
+
+      - name: Upload SARIF dans l'onglet Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+
+      # 3. Gate strict
+      - name: Trivy — gate (échec si CRITICAL corrigeable)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: scan-target:latest
+          severity: CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+
+      # 4. Push sur GHCR (rebuild instantané via cache)
+      - name: Push sur GHCR
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           build-args: |
             VITE_API_URL=${{ steps.meta.outputs.api_url }}
-          tags: |
-            ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.env }}
-            ${{ env.IMAGE_NAME }}:sha-${{ steps.meta.outputs.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
-          cache-to: type=gha,mode=max
