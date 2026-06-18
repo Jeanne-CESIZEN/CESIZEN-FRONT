@@ -10,6 +10,9 @@ dist
 
 # Divers
 e2e
+playwright.config.ts
+test-results
+playwright-report
 *.log
 .DS_Store
 .vscode
