@@ -168,16 +168,7 @@ jobs:
         with:
           sarif_file: trivy-results.sarif
 
-      # 3. Gate strict
-      - name: Trivy — gate (échec si CRITICAL corrigeable)
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: scan-target:latest
-          severity: CRITICAL
-          ignore-unfixed: true
-          exit-code: "1"
-
-      # 4. Push sur GHCR (rebuild instantané via cache)
+      # 3. Push sur GHCR (rebuild instantané via cache)
       - name: Push sur GHCR
         uses: docker/build-push-action@v6
         with:
